@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="display-4 mb-3">Job Details</h1>
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title job-title" style="font-size: 2em;">
+                {{ job.title }} (<span class="{% if job.status == 'active' %}active-job{% else %}hire-job {% endif %}">{{ job.get_status_display }}</span>)
+            </h1>
+
+            <p class="card-text job-short-description my-3" style="font-size: 1.2em;">
+                {{ job.short_description }}
+            </p>
+
+            <p class="card-text lead job-long-description" style="font-size: 1em;">
+                {{ job.long_description }}
+            </p>
+
+            <dl class="row mt-3">
+                <dt class="col-sm-3">Company name:</dt>
+                <dd class="col-sm-9">{{ job.company_name }}</dd>
+
+                {% if job.company_address %}
+                <dt class="col-sm-3">Company address:</dt>
+                <dd class="col-sm-9">{{ job.company_address }}</dd>
+                {% endif %}
+
+                {% if job.company_zipcode %}
+                <dt class="col-sm-3">Company zipcode:</dt>
+                <dd class="col-sm-9">{{ job.company_zipcode }}</dd>
+                {% endif %}
+
+                {% if job.company_place %}
+                <dt class="col-sm-3">Company place:</dt>
+                <dd class="col-sm-9">{{ job.company_place }}</dd>
+                {% endif %}
+
+                {% if job.company_country %}
+                <dt class="col-sm-3">Company country:</dt>
+                <dd class="col-sm-9">{{ job.company_country }}</dd>
+                {% endif %}
+
+                {% if job.get_company_size_display %}
+                <dt class="col-sm-3">Company size:</dt>
+                <dd class="col-sm-9">{{ job.get_company_size_display }}</dd>
+                {% endif %}
+            </dl>
+
+            <hr>
+
+            {% if request.user.userprofile.is_employer %}
+            <p class="alert alert-info">This job is not available for employers!</p>
+            {% elif job.status == 'active' and not request.user.userprofile.is_employer %}
+            <a href="{% url 'apply_for_job' job.id %}" class="btn btn-success apply-button">Apply Now</a>
+            {% else %}
+            <p class="alert alert-warning">This job is not available anymore!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<style>
+    .active-job {
+        font-weight: bold;
+        color: rgb(79, 147, 79);
+    }
+    .hire-job {
+        font-weight: bold;
+        color: rgb(178, 71, 71);
+    }
+    .apply-button {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .apply-button:hover {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}

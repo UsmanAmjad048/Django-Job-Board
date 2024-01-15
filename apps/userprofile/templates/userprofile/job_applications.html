@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<h2 class="display-4 my-5">Received Applications</h2>
+
+{% for job in job_applications %}
+<div class="card application-card my-3">
+    <div class="card-body">
+        <div class="card-body">
+            <h5 class="card-title">{{ job.job.title }}</h5>
+            <p class="card-subtitle text-muted">
+                <b>{{ job.created_by.username }}</b> applied 
+                ({{ job.created_at|timesince }} ago)
+            </p>
+            <p class="card-text">
+                Details about the application or any additional information.
+            </p>
+            <a href="{% url 'view_application' job.id %}" class="btn btn-primary">View Application</a>
+        </div>
+        
+</div>
+{% empty %}
+<p>No job applications yet...</p>
+{% endfor %}
+
+<style>
+    .text-color {
+        color: burlywood;
+    }
+
+    .application-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .application-card:hover {
+        transform: scale(1.02);
+    }
+</style>
+
+{% endblock %}

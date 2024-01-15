@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="display-4">Dashboard</h1>
+
+    {% if userprofile.is_employer %}
+        <h2 class="mt-4 mb-3">Jobs</h2>
+
+        <a href="{% url 'addjob' %}" class="btn btn-success mb-3">Add Job</a>
+        <a href="{% url 'all_application' %}" class="btn btn-light mb-3">Applications</a>
+
+        {% if request.user.jobs.all %}
+        <h3 class="mb-2">My Added Jobs</h3>
+        <ul class="list-group">
+            {% for job in request.user.jobs.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{% url 'view_dashboard_job' job.id %}">{{ job.title }}</a>
+                    <span class="badge badge-primary">{{ job.get_status_display }}</span>
+                </div>
+                <div>
+                    <small class="text-muted">Posted: {{ job.created_at|date:"F d, Y" }}</small>
+                </div>
+            </li>
+            {% empty %}
+            <p class="mb-0">You don't have any jobs yet...</p>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="mb-0">You haven't added any jobs yet...</p>
+        {% endif %}
+
+    {% else %}
+        <h2 class="mt-4 mb-3">Applications</h2>
+        {% if request.user.applications.all %}
+        <h3 class="mb-2">My Applied Jobs</h3>
+        <ul class="list-group">
+            {% for application in request.user.applications.all %}
+            <li class="list-group-item">
+                <div>
+                    <a href="{% url 'view_application' application.id %}">{{ application.job.title }}</a>
+                </div>
+                <div>
+                    <small class="text-muted">Applied: {{ application.created_at|date:"F d, Y" }}</small>
+                </div>
+            </li>
+            {% empty %}
+            <p class="mb-0">You haven't applied for any jobs yet...</p>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="mb-0">You haven't applied for any jobs yet...</p>
+        {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %}

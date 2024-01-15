@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div id="search-app" class="container my-5">
+    <h1 class="display-4 mb-3">Search Jobs</h1>
+
+    <form @submit.prevent="performSearch()" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="query">Job Title</label>
+                    <input type="text" name="query" class="form-control" v-model="query" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="company_size">Company Size</label>
+                    <select name="company_size" class="form-control" v-model="company_size">
+                        <option value="" selected>All</option>
+                        <option value="size_1-9">1-9</option>
+                        <option value="size_10-49">10-49</option>
+                        <option value="size_50-99">50-99</option>
+                        <option value="size_100">100+</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <button class="btn btn-success btn-block">Search</button>
+            </div>
+        </div>
+    </form>
+
+    <div v-if="jobs.length > 0">
+        <hr>
+
+        <div v-for="job in jobs" :key="job.id" class="card mb-3">
+            <div class="card-body">
+                <p class="card-text">[[ job.title ]]</p>
+                <h3 class="card-title">Company: [[ job.company_name ]]</h3>
+                <p><a :href="job.url" class="btn btn-primary">View Details</a></p>
+            </div>
+        </div>
+    </div>
+    <div v-if="isDataLoaded">
+        <p  class="error-message">Not Found</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                query: '',
+                company_size: '',
+                jobs: [],
+                error: false,
+                isDataLoaded: false,
+
+            }
+        },
+        delimiters: ['[[', ']]'],
+
+        methods: {
+            performSearch() {
+                const data = {
+                    'query': this.query,
+                    'company_size': this.company_size
+                }
+
+                fetch('/jobs/api/search/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then((response) => response.json())
+                    .then((result) => {
+                        this.jobs = result.jobs;
+                        this.isDataLoaded = this.jobs.length === 0 ? true : false;
+                    })
+                    .catch((error) => {
+                        this.error = error;
+                    })
+            }
+        }
+    })
+
+    app.mount('#search-app')
+</script>
+{% endblock %}

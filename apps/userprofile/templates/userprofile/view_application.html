@@ -1,0 +1,62 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="display-4 mb-4">View Application</h1>
+    <small class="text-muted">Date Added: {{ application.created_at }}</small>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="card-title">{{ application.job.title }}</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li><strong>Full Name:</strong> {{ application.first_name }} {{ application.last_name }}</li>
+                <li><strong>Age:</strong> {{ application.age }}</li>
+                <li><strong>Education:</strong> {{ application.education }}</li>
+                <li><strong>Location:</strong> {{ application.location }}</li>
+                <li><strong>Language:</strong> {{ application.language }}</li>
+                <li><strong>Email:</strong> {{ application.email }}</li>
+                <li><strong>Content:</strong> {{ application.content }}</li>
+                <li><strong>Experience:</strong> {{ application.experience }}</li>
+            </ul>
+
+            {% if application.cv_file %}
+            <a href="{% url 'view_cv_file' application_id=application.id %}" class="btn btn-primary">Download CV</a>
+            {% else %}
+            <p>No CV attached</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h2 class="display-5 mb-4">Conversation</h2>
+
+        {% for message in application.conversationmessages.all %}
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><strong>{{ message.created_by.username }} - {{ message.created_at|timesince }} ago</strong></span>
+                {% if message.created_by == request.user %}
+                <div id="deleteButton_{{ message.id }}" class="DeleteConversation">
+                    <a href="{% url 'deleteconversation' message.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ message.content }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p>No messages yet...</p>
+        {% endfor %}
+
+        <form method="post" action=".">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea class="form-control" placeholder="Your message" name="message" id="id_content"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Send</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

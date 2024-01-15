@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="display-4 my-5">View Job - {{ job.title }}</h1>
+
+    <div class="btn-group" role="group" aria-label="Job Actions">
+        <a href="{% url 'edit_job' job.id %}" class="btn btn-success">Edit</a>
+        <a href="{% url 'delete' job.id %}" class="btn btn-danger">Delete</a>
+    </div>
+
+    <p class="card-text job-short-description my-3" style="font-size: 1.2em;">
+        {{ job.short_description }}
+    </p>
+
+    <p class="card-text lead job-long-description" style="font-size: 1em;">
+        {{ job.long_description }}
+    </p>
+
+    <dl class="row mt-3">
+        <dt class="col-sm-3">Company name:</dt>
+        <dd class="col-sm-9">{{ job.company_name }}</dd>
+
+        {% if job.company_address %}
+        <dt class="col-sm-3">Company address:</dt>
+        <dd class="col-sm-9">{{ job.company_address }}</dd>
+        {% endif %}
+
+        {% if job.company_zipcode %}
+        <dt class="col-sm-3">Company zipcode:</dt>
+        <dd class="col-sm-9">{{ job.company_zipcode }}</dd>
+        {% endif %}
+
+        {% if job.company_place %}
+        <dt class="col-sm-3">Company place:</dt>
+        <dd class="col-sm-9">{{ job.company_place }}</dd>
+        {% endif %}
+
+        {% if job.company_country %}
+        <dt class="col-sm-3">Company country:</dt>
+        <dd class="col-sm-9">{{ job.company_country }}</dd>
+        {% endif %}
+
+        {% if job.get_company_size_display %}
+        <dt class="col-sm-3">Company size:</dt>
+        <dd class="col-sm-9">{{ job.get_company_size_display }}</dd>
+        {% endif %}
+    </dl>
+
+</div>
+
+{% endblock %}

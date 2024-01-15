@@ -1,0 +1,115 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class="container my-5">
+        <h1 class="title mt-5">Apply for Job - {{ job.title }}</h1>
+
+        {% if user.userprofile.linkedin_sub %}
+            <hr>
+            <form action="{% url 'refresh_linkedin_data' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="button is-success">
+                    Apply with LinkedIn
+                </button>
+            </form>
+            <hr>
+        {% endif %}
+
+        <form method="post" action="." enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="notification is-danger">
+                    {% for error in form.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% with user_data=request.session.user_data %}
+                <div class="field">
+                    <label class="label">First Name</label>
+                    <div class="control">
+                        <input type="text" class="input" name="first_name" id="id_first_name"
+                               value="{{ user_data.first_name|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Last Name</label>
+                    <div class="control">
+                        <input type="text" class="input" name="last_name" id="id_last_name"
+                               value="{{ user_data.last_name|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Email</label>
+                    <div class="control">
+                        <input type="email" class="input" name="email" id="email"
+                               value="{{ user_data.email|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Location (Address)</label>
+                    <div class="control">
+                        <textarea class="textarea" rows="2" name="location"
+                                  id="id_location">{{ user_data.location|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Language</label>
+                    <div class="control">
+                        <textarea class="textarea" rows="2" name="language"
+                                  id="language">{{ user_data.language|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Education (for BS or MS)</label>
+                    <div class="control">
+                        <input type="text" class="input education" name="education" id="id_education">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Content</label>
+                    <div class="control">
+                        <textarea class="textarea" name="content" id="id_content" rows="5" cols="50"></textarea>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Age</label>
+                    <div class="control">
+                        <input type="number" class="input" name="age" id="id_age">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Experience (Min 1 year)</label>
+                    <div class="control">
+                        <textarea class="textarea" rows="5" name="experience" id="id_experience"></textarea>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">CV (Resume)</label>
+                    <div class="control">
+                        <input type="file" name="cv_file" id="id_cv_file" accept=".pdf">
+                    </div>
+                </div>
+
+                <p class="my-5 notification is-danger">Be careful, you can apply only once.</p>
+
+                <div class="field mb-5">
+                    <div class="control">
+                        <button class="button is-success">Submit</button>
+                    </div>
+                </div>
+            {% endwith %}
+        </form>
+    </div>
+{% endblock %}
